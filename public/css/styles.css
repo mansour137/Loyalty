@@ -1,0 +1,30 @@
+
+body {
+  background-color: #E8ECEF;
+}
+
+.centered {
+    padding-top: 200px;
+    text-align: center;
+}
+
+.secret-text {
+  text-align: center;
+  font-size: 2rem;
+  color: #fff;
+  background-color: #000;
+}
+.font{
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: large;
+}
+@media (max-width: 576px) {
+    .container {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    .form-control {
+        margin-bottom: 10px;
+    }
+}

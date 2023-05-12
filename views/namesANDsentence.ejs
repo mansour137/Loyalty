@@ -1,0 +1,26 @@
+<%- include('partials/header') %>
+
+<div class="container mt-5 jumbotron centered">
+
+    <form action="" method="post">
+        <p class="display-5" style="font-size: 24px;">How many friends</p>
+        <input type="number" placeholder="MINIMUM 3 &#128578;" class="input-group flex-nowrap form-control" style="max-width: 200px;" name="number" min="3" max="10">
+        <button type="submit" class="btn btn-primary">SET NAMES</button>
+        <br>
+    </form>
+    <br>
+
+
+    <form action="/play" method="post">
+        <% let count = player; %>
+        <% while (count > 0) { %>
+            <input type="text" class="input-group flex-nowrap form-control" style="max-width: 200px;" name="name<%= count %>" placeholder="NAME" required>
+            <input type="password" class="input-group flex-nowrap form-control" name="sentence<%= count %>" placeholder="SENTENCE" required>
+            <hr>
+            <% count--; %>
+        <% } %>
+        <button type="submit" class="btn btn-success">START B2A<span>&#x1F608;</span></button>
+    </form>
+</div>
+
+<%- include('partials/footer') %>

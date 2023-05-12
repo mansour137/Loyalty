@@ -1,0 +1,15 @@
+<%- include('partials/header') %>
+
+<div class="card jumbotron centered">
+    <div class="container ">
+        <!--        <i class="fas fa-key fa-6x"></i>-->
+        <img src="data:image/png;base64,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">
+        <h1 class="display-3">Loyalty</h1>
+        <p class="lead"></p>
+        <hr>
+        <!--        <a class="btn btn-light btn-lg" href="/loginOrRegestier" role="button">Let's Start</a>-->
+    </div>
+</div>
+
+
+<%- include('partials/footer') %>
