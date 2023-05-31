@@ -8,6 +8,7 @@ const passport = require("passport");
 const findOrCreate = require("mongoose-findorcreate");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const globals = require("./global")
+const path = require('path')
 const app = express();
 
 app.use(express.static("public"));
