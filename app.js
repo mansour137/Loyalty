@@ -5,7 +5,6 @@ const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const session = require('express-session');
 const passport = require("passport");
-const passportLocalMongoose = require("passport-local-mongoose");
 const findOrCreate = require("mongoose-findorcreate");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const globals = require("./global")
@@ -26,7 +25,7 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-mongoose.connect("mongodb://localhost/Loyalty", { useNewUrlParser: true });
+mongoose.connect("mongodb+srv://admin-mansour:1372001@cluster0.y9q5zgc.mongodb.net/Loyalty", { useNewUrlParser: true });
 // mongoose.set("useCreateIndex", true);
 
 const playerSchema = new mongoose.Schema({
@@ -35,7 +34,9 @@ const playerSchema = new mongoose.Schema({
     numFriends:Number,
     friends: [{
         name: String,
-        sentence: String
+        sentence: String,
+        score: { type: Number, default: 0 },
+        times:Number,
     }]
 });
 
@@ -108,64 +109,109 @@ app.post('/setNames', (req, res) => {
     res.render('namesAndSentence', { player: numPlayer });
 });
 
-app.get('/play', (req, res) => {
-    const playerID = globals.getIdPlayer();
-    const arr_sentences = [];
-    console.log(playerID)
-    Player.findOne({ id: playerID })
-        .then((player) => {
-            if (player) {
-                player.friends.forEach((friend) => {
-                    arr_sentences.push(friend.sentence);
-                });
-            }
-            console.log(arr_sentences);
-           let randomIndex = Math.floor(Math.random() * arr_sentences.length);
-           let name_of_sentense ;
-           console.log(arr_sentences[randomIndex],randomIndex);
-            player.friends.forEach((friend) => {
-                if(friend.sentence == arr_sentences[randomIndex]){
-                    console.log(friend.name);
-                    name_of_sentense = friend.name;
-                }
-            });
-            res.render('play');
-        })
-        .catch((error) => {
-            console.error(error);
-            res.render('play');
-        });
-
-});
 
 
-app.post('/play', (req, res) => {
-    const numPlayer = globals.getNumPlayer(); // Corrected variable name
 
+app.post('/Names', (req, res) => {
+    const numPlayer = globals.getNumPlayer();
     const idPlayer = globals.getIdPlayer();
-    // console.log(idPlayer)
-    // console.log(numPlayer);
+
     const friend = [];
     for (let i = numPlayer; i > 0; i--) {
-        let name = req.body['name' + i];
+        let name = req.body['name' + i].toLowerCase();
         let sentence = req.body['sentence' + i];
-        friend.push({name,sentence})
+        friend.push({ name, sentence });
     }
-    // console.log(friend)
+
     Player.findOneAndUpdate({ id: idPlayer }, {
         friends: friend,
-        numFriends :numPlayer
+        numFriends: numPlayer
     })
         .then((result) => {
             console.log("ADDED");
-            res.render('play', { user: result });
+            console.log(globals.getSentences());
+            res.redirect('/play');
         })
         .catch((err) => {
             console.error(err);
             res.status(500).send("An error occurred");
         });
+});
 
-})
+app.get('/play', (req, res) => {
+    const playerID = globals.getIdPlayer();
+    const arr_sentences = [];
+    const name_Friends = [];
+    const mix_arr = [];
+    console.log(playerID);
+    Player.findOne({ id: playerID })
+        .then((player) => {
+            if (player) {
+                player.friends.forEach((friend) => {
+                    arr_sentences.push(friend.sentence);
+                    name_Friends.push(friend.name);
+                    mix_arr.push({
+                        name:friend.name,
+                        sentence:friend.sentence,
+                        times:( typeof  friend.times === 'undefined' ? 0 : friend.times),
+                        score:( typeof  friend.score === 'undefined' ? 0 : friend.score)
+                    })
+                });
+
+            }
+            console.log(arr_sentences);
+            console.log(name_Friends);
+            console.log(mix_arr)
+            globals.setFriendNameAndSentence(mix_arr);
+            // Generate a random index within the range of mix_arr length
+            let random_Index_for_name = Math.floor(Math.random() * name_Friends.length);
+            let random_name = name_Friends[random_Index_for_name];
+            name_Friends.splice(random_Index_for_name, 1);
+            globals.setTurnName(random_name);
+            let random_index_for_sentence = Math.floor(Math.random() * arr_sentences.length)
+            let random_sentece = arr_sentences[random_index_for_sentence];
+            arr_sentences.splice(random_index_for_sentence, 1);
+            console.log(random_index_for_sentence,random_Index_for_name)
+            globals.setSentences(random_sentece);
+                res.render('play' ,{
+                    TURN:random_name,
+                    sentence:random_sentece
+                })
+
+        })
+        .catch((error) => {
+            console.error(error);
+            res.render('play');
+        });
+});
+
+app.post("/play", (req, res) => {
+    const name_of_sentence = req.body.name.toLowerCase();
+    const sentence = globals.getSentences();
+    const all_name_sentence = globals.getFriendsNamesAndSentence();
+    console.log(sentence, name_of_sentence);
+    let match_name = false;
+    let ch = false;
+    all_name_sentence.forEach((result) => {
+        if (result.name === name_of_sentence) {
+            ch = true;
+            if (result.sentence === sentence) {
+                match_name = true;
+            }
+        }
+    });
+    if (match_name) {
+        res.render('right');
+    } else {
+        if (ch) {
+            res.render('wrong');
+        } else {
+            res.render('try_again');
+        }
+    }
+});
+
+
 
 app.listen(3000,()=>{
     console.log('server running on port 3000')
