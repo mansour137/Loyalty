@@ -100,7 +100,7 @@ app.get("/login",(req,res)=>{
 
 app.get('/setNames', (req, res) => {
   if( req.isAuthenticated()){
-      res.render('namesAndSentence', {player: 0});
+      res.render('namesANDsentence', {player: 0});
   }else{
       res.redirect('/login')
   }
@@ -109,7 +109,7 @@ app.post('/setNames', (req, res) => {
     // res.redirect('/setNames');
     const numPlayer = req.body.number;
     globals.setNumPlayer(numPlayer)
-    res.render('namesAndSentence', { player: numPlayer });
+    res.render('namesANDsentence', { player: numPlayer });
 });
 
 
