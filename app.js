@@ -98,7 +98,7 @@ app.get("/login",(req,res)=>{
     res.render('loginOrRegestier');
 });
 
-app.get('https://loyalty2.onrender.com/auth/google/setNames', (req, res) => {
+app.get('/setNames', (req, res) => {
   if( req.isAuthenticated()){
       res.render('namesAndSentence', {player: 0});
   }else{
