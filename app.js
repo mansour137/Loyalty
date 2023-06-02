@@ -66,10 +66,10 @@ passport.deserializeUser(function(user, cb) {
 passport.use(new GoogleStrategy({
         clientID: process.env.CLIENT_ID,
         clientSecret: process.env.CLIENT_SECRET,
-        callbackURL: "https://loyalty2.onrender.com/auth/google/setNames",
+        callbackURL: "https://loyalty-8thr.onrender.com/auth/google/setNames",
         userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo"
-
     },
+                               
     function(accessToken, refreshToken, profile, cb) {
         console.log(profile);
         Player.findOrCreate({ id: profile.id , username:profile.displayName }, function (err, user) {
