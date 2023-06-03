@@ -66,7 +66,7 @@ passport.deserializeUser(function(user, cb) {
 passport.use(new GoogleStrategy({
         clientID: process.env.CLIENT_ID,
         clientSecret: process.env.CLIENT_SECRET,
-        callbackURL: "https://loyalty-8thr.onrender.com/auth/google/setNames",
+        callbackURL: "https://loyalty-ap5p.onrender.com/auth/google/setNames",
         userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo"
     },
                                
