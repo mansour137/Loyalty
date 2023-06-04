@@ -99,11 +99,9 @@ app.get("/login",(req,res)=>{
 });
 
 app.get('/setNames', (req, res) => {
-  if( req.isAuthenticated()){
+  
       res.render('namesAndSentence', {player: 0});
-  }else{
-      res.redirect('/login')
-  }
+ 
 });
 app.post('/setNames', (req, res) => {
     // res.redirect('/setNames');
