@@ -65,8 +65,8 @@ passport.deserializeUser(function(user, cb) {
 passport.use(new GoogleStrategy({
         clientID: process.env.CLIENT_ID,
         clientSecret: process.env.CLIENT_SECRET,
-        callbackURL: "https://loyalty2.onrender.com/auth/google/setNames",
-        userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo"
+        callbackURL: "http://localhost:3000/auth/google/setNames",
+        userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo",
 
     },
     function(accessToken, refreshToken, profile, cb) {
@@ -154,10 +154,10 @@ app.get('/play', (req, res) => {
                     arr_sentences.push(friend.sentence);
                     name_Friends.push(friend.name);
                     mix_arr.push({
-                        name:friend.name,
-                        sentence:friend.sentence,
-                        times:( typeof  friend.times === 'undefined' ? 0 : friend.times),
-                        score:( typeof  friend.score === 'undefined' ? 0 : friend.score)
+                        name: friend.name,
+                        sentence: friend.sentence,
+                        times: (typeof friend.times === 'undefined' ? 0 : friend.times),
+                        score: (typeof friend.score === 'undefined' ? 0 : friend.score)
                     })
                 });
 
@@ -168,18 +168,25 @@ app.get('/play', (req, res) => {
             globals.setFriendNameAndSentence(mix_arr);
             // Generate a random index within the range of mix_arr length
             let random_Index_for_name = Math.floor(Math.random() * name_Friends.length);
+            let random_index_for_sentence = Math.floor(Math.random() * arr_sentences.length);
+
+            if (random_Index_for_name === random_index_for_sentence) {
+                if ( random_index_for_sentence === arr_sentences.length - 1) {
+                    random_index_for_sentence--;
+                }else{
+                    random_index_for_sentence++;
+                }
+            }
+
             let random_name = name_Friends[random_Index_for_name];
-            name_Friends.splice(random_Index_for_name, 1);
+            let random_sentence = arr_sentences[random_index_for_sentence];
             globals.setTurnName(random_name);
-            let random_index_for_sentence = Math.floor(Math.random() * arr_sentences.length)
-            let random_sentece = arr_sentences[random_index_for_sentence];
-            arr_sentences.splice(random_index_for_sentence, 1);
-            console.log(random_index_for_sentence,random_Index_for_name)
-            globals.setSentences(random_sentece);
-                res.render('play' ,{
-                    TURN:random_name,
-                    sentence:random_sentece
-                })
+            globals.setSentences(random_sentence);
+
+            res.render('play', {
+                TURN: random_name,
+                sentence: random_sentence
+            });
 
         })
         .catch((error) => {
