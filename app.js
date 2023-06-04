@@ -66,9 +66,9 @@ passport.use(new GoogleStrategy({
         clientID: process.env.CLIENT_ID,
         clientSecret: process.env.CLIENT_SECRET,
         callbackURL: "https://loyalty-ap5p.onrender.com/auth/google/setNames",
-        userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo",
-
+        userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo"
     },
+                               
     function(accessToken, refreshToken, profile, cb) {
         console.log(profile);
         Player.findOrCreate({ id: profile.id , username:profile.displayName }, function (err, user) {
@@ -99,19 +99,14 @@ app.get("/login",(req,res)=>{
 });
 
 app.get('/setNames', (req, res) => {
-  
-      res.render('namesAndSentence', {player: 0});
- 
+      res.render('namesANDsentence', {player: 0});
 });
 app.post('/setNames', (req, res) => {
     // res.redirect('/setNames');
     const numPlayer = req.body.number;
     globals.setNumPlayer(numPlayer)
-    res.render('namesAndSentence', { player: numPlayer });
+    res.render('namesANDsentence', { player: numPlayer });
 });
-
-
-
 
 app.post('/Names', (req, res) => {
     const numPlayer = globals.getNumPlayer();
